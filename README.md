@@ -1,60 +1,55 @@
-# Fetal Health Monitoring using Cardiotocography (CTG)
+# Fetal Health Monitoring using Cardiotocography
 
-## Project Overview
+## About the Project
 
-Fetal Health Monitoring using Cardiotocography (CTG) is a Machine Learning based web application designed to classify fetal health conditions into three categories:
+This project is a Machine Learning based system for predicting fetal health using Cardiotocography (CTG) data.
+
+The model analyzes different CTG parameters and classifies fetal health into three categories:
 
 - Normal
 - Suspect
 - Pathological
 
-The system uses important Cardiotocography (CTG) parameters and a trained XGBoost machine learning model to provide a fetal health risk classification.
+## Machine Learning
 
-The project combines Machine Learning with a Flask-based web dashboard to provide an interactive interface for entering CTG parameters and viewing prediction results.
+The project includes:
 
-> **Note:** This project is an academic/ML prototype intended for educational and demonstration purposes. It is not intended to replace professional medical diagnosis or clinical decision-making.
+- Data preprocessing and cleaning
+- Exploratory Data Analysis
+- Correlation analysis
+- PCA visualization
+- Feature selection using Random Forest
+- Logistic Regression
+- SVM
+- Decision Tree
+- XGBoost
 
----
+After comparing the models, XGBoost is used as the final prediction model.
 
-## Objectives
+## Web Application
 
-- Analyze Cardiotocography (CTG) parameters using Machine Learning.
-- Identify important features affecting fetal health classification.
-- Compare different Machine Learning algorithms.
-- Train an XGBoost classification model.
-- Build a Flask-based interactive prediction dashboard.
-- Store prediction history using SQLite.
-- Provide an easy-to-understand fetal health risk classification.
+A Flask web application is developed for the project.
 
----
+The application allows the user to:
 
-## Machine Learning Workflow
+- Enter CTG parameters
+- Enter a patient ID
+- Predict fetal health
+- Display the prediction result
+- Give a simple recommendation based on the result
+- Store and view previous prediction history
 
-```text
-CTG Dataset
-     ↓
-Data Cleaning
-     ↓
-Exploratory Data Analysis
-     ↓
-Correlation Analysis
-     ↓
-PCA Visualization
-     ↓
-Feature Importance Analysis
-     ↓
-Feature Selection
-     ↓
-Train-Test Split
-     ↓
-Feature Scaling
-     ↓
-Model Training
-     ↓
-Model Comparison
-     ↓
-XGBoost Model
-     ↓
-Model Serialization
-     ↓
-Flask Web Dashboard
+SQLite is used to store the patient prediction history.
+
+## Technologies Used
+
+- Python
+- Pandas
+- NumPy
+- Scikit-learn
+- XGBoost
+- Matplotlib
+- Seaborn
+- Flask
+- HTML
+- SQLite

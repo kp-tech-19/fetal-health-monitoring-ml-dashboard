@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Patient History</title>
+<style>
+body {
+    font-family: Arial;
+    background: linear-gradient(135deg, #f5f7fb, #c3cfe2);
+    padding: 30px;
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 15px;
+    text-align: center;
+}
+
+th {
+    background: #66a6ff;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background: #f2f2f2;
+}
+
+.normal { color: green; }
+.suspect { color: orange; }
+.patho { color: red; }
+
+.back-btn {
+    display: block;
+    margin: 20px auto;
+    padding: 12px 25px;
+    background: #66a6ff;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h1>📊 Patient History</h1>
+
+{% if patients %}
+<table>
+<tr>
+<th>Patient ID</th>
+<th>Condition</th>
+<th>Timestamp</th>
+</tr>
+
+{% for p in patients %}
+<tr>
+<td>{{ p.patient_id }}</td>
+
+<td class="
+{% if p.result == 'NORMAL' %}normal
+{% elif p.result == 'SUSPECT' %}suspect
+{% else %}patho
+{% endif %}
+">
+{{ p.result }}
+</td>
+
+<td>{{ p.time }}</td>
+</tr>
+{% endfor %}
+
+</table>
+{% else %}
+<p style="text-align:center;">No history available</p>
+{% endif %}
+
+<form action="/">
+<button class="back-btn">⬅ Back to Home</button>
+</form>
+
+</body>
+</html>

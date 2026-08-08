@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Fetal Health Dashboard</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: linear-gradient(135deg, #f5f7fb 0%, #c3cfe2 100%);
+    min-height: 100vh;
+}
+
+.header {
+    background: linear-gradient(90deg, #a8edea, #fed6e3);
+    padding: 25px;
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    color: #2c3e50;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    padding: 30px 20px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    width: 200px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card h3 { color: #666; margin: 0 0 10px 0; font-size: 16px; }
+.card h2 { color: #2c3e50; margin: 0; font-size: 32px; }
+
+.container {
+    display: flex;
+    gap: 30px;
+    padding: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.left, .right {
+    flex: 1;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+input {
+    width: 95%;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 12px;
+    border: 2px solid #e1e8ed;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+input:focus {
+    outline: none;
+    border-color: #66a6ff;
+}
+
+button {
+    background: linear-gradient(90deg, #89f7fe, #66a6ff);
+    border: none;
+    padding: 15px 30px;
+    border-radius: 12px;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    transition: transform 0.3s;
+}
+
+button:hover {
+    transform: scale(1.02);
+}
+
+.result {
+    font-size: 36px;
+    font-weight: bold;
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.normal { background: #d4edda; color: #155724; border: 3px solid #c3e6cb; }
+.suspect { background: #fff3cd; color: #856404; border: 3px solid #ffeaa7; }
+.patho { background: #f8d7da; color: #721c24; border: 3px solid #f5c6cb; }
+
+.risk {
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: 15px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 22px;
+}
+
+.low { background: #d4edda; color: #155724; }
+.mid { background: #fff3cd; color: #856404; }
+.high { background: #f8d7da; color: #721c24; }
+
+.clinical {
+    margin-top: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f0f6ff, #e3f2fd);
+    border-radius: 15px;
+    font-size: 16px;
+    border-left: 5px solid #2196f3;
+}
+
+h2, h3 { color: #2c3e50; }
+.patient-id { 
+    background: #e3f2fd; 
+    padding: 10px; 
+    border-radius: 8px; 
+    margin-bottom: 20px; 
+    font-weight: bold;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .container { flex-direction: column; }
+    .stats { flex-direction: column; align-items: center; }
+    .card { width: 250px; margin: 10px; }
+}
+</style>
+</head>
+
+<body>
+<div class="header">
+🩺 Fetal Health Monitoring System
+</div>
+
+<!-- DASHBOARD STATS -->
+<div class="stats">
+<div class="card">
+<h3>Total Patients</h3>
+<h2>{{ patients|length }}</h2>
+</div>
+
+<div class="card">
+<h3>Normal</h3>
+<h2>{{ patients|selectattr("result", "equalto", "NORMAL")|list|length }}</h2>
+</div>
+
+<div class="card">
+<h3>Suspect</h3>
+<h2>{{ patients|selectattr("result", "equalto", "SUSPECT")|list|length }}</h2>
+</div>
+
+<div class="card">
+<h3>Pathological</h3>
+<h2>{{ patients|selectattr("result", "equalto", "PATHOLOGICAL")|list|length }}</h2>
+</div>
+</div>
+
+<div class="container">
+<!-- LEFT: INPUT FORM -->
+<div class="left">
+<h2>📋 Patient Input</h2>
+
+<h3>⚡ Quick Input </h3>
+
+<input type="text" id="arrayInput" 
+placeholder="Enter 12 input features: ">
+
+<button type="button" onclick="fillInputs()" 
+style="background:#ff9800; margin-bottom:10px;">
+Auto Fill Features
+</button>
+
+<form action="/predict" method="POST">
+
+<input name="patient_id" 
+       placeholder="Enter Patient ID (e.g., P001)" 
+       value="{{ patient_id if patient_id else '' }}" required>
+
+{% for feature in features %}
+<input type="number" step="any" name="{{ feature }}" 
+id="feature{{ loop.index0 }}"
+placeholder="{{ feature.replace('_', ' ').title() }}"
+value="{{ input_data[feature] if input_data else '' }}" required>
+{% endfor %}
+
+<button type="submit">Analyze</button>
+
+</form>
+</div>
+
+<!-- RIGHT: RESULTS -->
+<div class="right">
+<h2>Prediction</h2>
+
+{% if prediction %}
+<div class="patient-id">Patient: {{ patient_id }}</div>
+
+<div class="result 
+{% if prediction == 'NORMAL' %}normal
+{% elif prediction == 'SUSPECT' %}suspect
+{% else %}patho
+{% endif %}">
+{{ prediction }}
+</div>
+
+<p><b>💡 Recommendation:</b> {{ recommendation }}</p>
+
+<!-- RISK LEVEL -->
+<h3> Risk Level</h3>
+<div class="risk 
+{% if prediction == 'NORMAL' %}low
+{% elif prediction == 'SUSPECT' %}mid
+{% else %}high
+{% endif %}">
+
+{% if prediction == 'NORMAL' %}🟢 LOW RISK{% endif %}
+{% if prediction == 'SUSPECT' %}🟡 MODERATE RISK{% endif %}
+{% if prediction == 'PATHOLOGICAL' %}🔴 HIGH RISK{% endif %}
+
+</div>
+
+<!-- CLINICAL INTERPRETATION -->
+<div class="clinical">
+<h3>🧠 Clinical Interpretation</h3>
+
+{% if prediction == 'NORMAL' %}
+Fetal condition appears stable.No abnormal patterns detected in cardiotocography signals. Continue routine monitoring.
+{% elif prediction == 'SUSPECT' %}
+Some irregular patterns detected.Continuous monitoring recommended. Prepare for potential complications.
+{% else %}
+Critical abnormalities detected! Immediate medical intervention required. Alert obstetric team NOW.
+{% endif %}
+</div>
+<p><b>Input Summary:</b></p>
+<ul>
+{% for key, value in input_data.items() %}
+<li>{{ key.replace('_',' ').title() }} : {{ value }}</li>
+{% endfor %}
+</ul>
+{% else %}
+<h3>No prediction yet</h3>
+<p>Enter patient data on the left to get fetal health prediction.</p>
+{% endif %}
+</div>
+
+</div>
+
+<!-- BUTTONS -->
+<div style="margin-top:20px; text-align:center;">
+<form action="/history">
+<button type="submit" style="background:#4CAF50; width:250px;">
+📊 View Patient History
+</button>
+</form>
+</div>
+
+</div>
+
+<script>
+function fillInputs() {
+    let input = document.getElementById("arrayInput").value;
+
+    // Remove [] if present and split
+    let values = input.replace(/[\[\]]/g, '').split(",");
+
+    if (values.length !== {{ features|length }}) {
+        alert("Enter exactly {{ features|length }} values!");
+        return;
+    }
+
+    for (let i = 0; i < values.length; i++) {
+        let field = document.getElementById("feature" + i);
+        if (field) {
+            field.value = values[i].trim();
+        }
+    }
+}
+</script>
+
+</body>
+</html>
